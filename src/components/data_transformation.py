@@ -31,13 +31,13 @@ class DataTransformation:
             numerical_pipeline=Pipeline(
                 steps=[
                     ("imputer", SimpleImputer(strategy="median")), #To handle missing values
-                    ("scalar",StandardScaler())
+                    ("scalar",StandardScaler(with_mean=False))
                 ]
             )
             categorical_pipeline=Pipeline(
                 steps=[
                     ("imputer", SimpleImputer(strategy="most_frequent")),
-                    ("one_hot_encoder",OneHotEncoder()),
+                    ("one_hot_encoder",OneHotEncoder(handle_unknown='ignore', sparse_output=False)),
                     ("scalar", StandardScaler())
                 ]
             )
@@ -54,10 +54,10 @@ class DataTransformation:
         except Exception as e:
             raise CustomException(e, sys)
 
-    def data_initiation(self, train_path, test_path):
+    def initiate_data_transformation(self, train_path, test_path):
         try:
-            train_df=pd.read_csv("train_path")
-            test_df=pd.read_csv("test_path")
+            train_df=pd.read_csv(train_path)
+            test_df=pd.read_csv(test_path)
             logging.info("Read Train and Test completed")
             logging.info("Obtaining preprocessingg object")
             preprocessing_obj=self.get_data_transformer_object()
@@ -81,10 +81,13 @@ class DataTransformation:
                 file_path=self.datatransformation_config.preprocessor_obj_file_path,
                 obj=preprocessing_obj
             )
+            #save_object(self.datatransformation_config.preprocessor_obj_file_path, preprocessing_obj)
+
             return(
                 train_arr,
                 test_arr,
                 self.datatransformation_config.preprocessor_obj_file_path
             )
-        except:
-            pass
+        except Exception as e:
+            raise CustomException(e,sys)
+            

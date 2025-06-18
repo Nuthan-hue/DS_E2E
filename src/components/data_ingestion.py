@@ -39,4 +39,9 @@ class DataIngestion:#here I have other functions inside the class, not just vari
 
 if __name__=='__main__':
     object=DataIngestion()
-    object.initiate_data_injection()
+    train_data, test_data=object.initiate_data_injection()
+
+    data_transformation= DataTransformation()
+    data_transformation.initiate_data_transformation(train_data,test_data)
+    
+
